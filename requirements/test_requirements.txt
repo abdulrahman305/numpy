@@ -17,3 +17,4 @@ typing_extensions>=4.5.0
 # for optional f2py encoding detection
 charset-normalizer
 tzdata
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
