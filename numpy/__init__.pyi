@@ -407,7 +407,7 @@ from numpy._core.shape_base import (
 
 from ._expired_attrs_2_0 import __expired_attributes__ as __expired_attributes__
 from ._globals import _CopyMode as _CopyMode
-from ._globals import _NoValue as _NoValue
+from ._globals import _NoValue as _NoValue, _NoValueType
 
 from numpy.lib import (
     scimath as emath,
@@ -3857,8 +3857,8 @@ class number(generic[_NumberItemT_co], Generic[_NBit, _NumberItemT_co]):
     def __rsub__(self, other: _NumberLike_co, /) -> Incomplete: ...
     def __mul__(self, other: _NumberLike_co, /) -> Incomplete: ...
     def __rmul__(self, other: _NumberLike_co, /) -> Incomplete: ...
-    def __pow__(self, other: _NumberLike_co, /) -> Incomplete: ...
-    def __rpow__(self, other: _NumberLike_co, /) -> Incomplete: ...
+    def __pow__(self, other: _NumberLike_co, mod: None = None, /) -> Incomplete: ...
+    def __rpow__(self, other: _NumberLike_co, mod: None = None, /) -> Incomplete: ...
     def __truediv__(self, other: _NumberLike_co, /) -> Incomplete: ...
     def __rtruediv__(self, other: _NumberLike_co, /) -> Incomplete: ...
 
@@ -5529,11 +5529,10 @@ class datetime64(_RealMixin, generic[_DT64ItemT_co], Generic[_DT64ItemT_co]):
     @overload
     def __ge__(self, other: _SupportsGT, /) -> bool_: ...
 
-class flexible(_RealMixin, generic[_FlexibleItemT_co], Generic[_FlexibleItemT_co]):
-    @abstractmethod
-    def __new__(cls) -> Self: ...
+@final  # cannot be subclassed at runtime
+class flexible(_RealMixin, generic[_FlexibleItemT_co], Generic[_FlexibleItemT_co]): ...  # type: ignore[misc]
 
-class void(flexible[bytes | tuple[Any, ...]]):
+class void(flexible[bytes | tuple[Any, ...]]):  # type: ignore[misc]
     @overload
     def __new__(cls, value: _IntLike_co | bytes, /, dtype: None = None) -> Self: ...
     @overload
@@ -5547,13 +5546,13 @@ class void(flexible[bytes | tuple[Any, ...]]):
 
     def setfield(self, val: ArrayLike, dtype: DTypeLike, offset: int = ...) -> None: ...
 
-class character(flexible[_CharacterItemT_co], Generic[_CharacterItemT_co]):
+class character(flexible[_CharacterItemT_co], Generic[_CharacterItemT_co]):  # type: ignore[misc]
     @abstractmethod
     def __new__(cls) -> Self: ...
 
 # NOTE: Most `np.bytes_` / `np.str_` methods return their builtin `bytes` / `str` counterpart
 
-class bytes_(character[bytes], bytes):
+class bytes_(character[bytes], bytes):  # type: ignore[misc]
     @overload
     def __new__(cls, o: object = ..., /) -> Self: ...
     @overload
@@ -5562,7 +5561,7 @@ class bytes_(character[bytes], bytes):
     #
     def __bytes__(self, /) -> bytes: ...
 
-class str_(character[str], str):
+class str_(character[str], str):  # type: ignore[misc]
     @overload
     def __new__(cls, value: object = ..., /) -> Self: ...
     @overload
@@ -5764,15 +5763,16 @@ class broadcast:
 
 @final
 class busdaycalendar:
-    def __new__(
-        cls,
-        weekmask: ArrayLike = ...,
-        holidays: ArrayLike | dt.date | _NestedSequence[dt.date] = ...,
-    ) -> busdaycalendar: ...
+    def __init__(
+        self,
+        /,
+        weekmask: str | Sequence[int | bool_ | integer] | _SupportsArray[dtype[bool_ | integer]] = "1111100",
+        holidays: Sequence[dt.date | datetime64] | _SupportsArray[dtype[datetime64]] | None = None,
+    ) -> None: ...
     @property
-    def weekmask(self) -> NDArray[np.bool]: ...
+    def weekmask(self) -> ndarray[tuple[int], dtype[bool_]]: ...
     @property
-    def holidays(self) -> NDArray[datetime64]: ...
+    def holidays(self) -> ndarray[tuple[int], dtype[datetime64[dt.date]]]: ...
 
 @final
 class nditer:
@@ -5902,7 +5902,8 @@ class vectorize:
     __doc__: str | None
     def __init__(
         self,
-        pyfunc: Callable[..., Any],
+        /,
+        pyfunc: Callable[..., Any] | _NoValueType = ...,  # = _NoValue
         otypes: str | Iterable[DTypeLike] | None = None,
         doc: str | None = None,
         excluded: Iterable[int | str] | None = None,
@@ -6013,9 +6014,9 @@ class matrix(ndarray[_2DShapeT_co, _DTypeT_co]):
     def __imul__(self, other: ArrayLike, /) -> Self: ...
 
     #
-    def __pow__(self, other: ArrayLike, mod: None = None, /) -> matrix[_2D, Incomplete]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
-    def __rpow__(self, other: ArrayLike, mod: None = None, /) -> matrix[_2D, Incomplete]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
-    def __ipow__(self, other: ArrayLike, /) -> Self: ...  # type: ignore[misc, override]
+    def __pow__(self, other: ArrayLike, /) -> matrix[_2D, Incomplete]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def __rpow__(self, other: ArrayLike, /) -> matrix[_2D, Incomplete]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def __ipow__(self, other: ArrayLike, /) -> Self: ...  # type: ignore[override]
 
     # keep in sync with `prod` and `mean`
     @overload  # type: ignore[override]
