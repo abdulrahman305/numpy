@@ -269,6 +269,7 @@ def choose(
     mode: _ModeKind = "raise",
 ) -> _ArrayT: ...
 
+# keep in sync with `ma.core.repeat`
 @overload
 def repeat(
     a: _ArrayLike[_ScalarT],
@@ -294,6 +295,7 @@ def repeat(
     axis: SupportsIndex,
 ) -> NDArray[Any]: ...
 
+#
 def put(
     a: NDArray[Any],
     ind: _ArrayLikeInt_co,
@@ -301,18 +303,13 @@ def put(
     mode: _ModeKind = "raise",
 ) -> None: ...
 
+# keep in sync with `ndarray.swapaxes` and `ma.core.swapaxes`
 @overload
-def swapaxes(
-    a: _ArrayLike[_ScalarT],
-    axis1: SupportsIndex,
-    axis2: SupportsIndex,
-) -> NDArray[_ScalarT]: ...
+def swapaxes(a: _ArrayT, axis1: SupportsIndex, axis2: SupportsIndex) -> _ArrayT: ...
 @overload
-def swapaxes(
-    a: ArrayLike,
-    axis1: SupportsIndex,
-    axis2: SupportsIndex,
-) -> NDArray[Any]: ...
+def swapaxes(a: _ArrayLike[_ScalarT], axis1: SupportsIndex, axis2: SupportsIndex) -> NDArray[_ScalarT]: ...
+@overload
+def swapaxes(a: ArrayLike, axis1: SupportsIndex, axis2: SupportsIndex) -> NDArray[Any]: ...
 
 @overload
 def transpose(
@@ -507,6 +504,7 @@ def squeeze(
     axis: _ShapeLike | None = None,
 ) -> NDArray[Any]: ...
 
+# keep in sync with `ma.core.diagonal`
 @overload
 def diagonal(
     a: _ArrayLike[_ScalarT],
@@ -522,6 +520,7 @@ def diagonal(
     axis2: SupportsIndex = 1,  # >= 2D array
 ) -> NDArray[Any]: ...
 
+# keep in sync with `ma.core.trace`
 @overload
 def trace(
     a: ArrayLike,  # >= 2D array
@@ -562,14 +561,11 @@ def ravel(a: str | _NestedSequence[str], order: _OrderKACF = "C") -> _Array1D[np
 @overload
 def ravel(a: bool | _NestedSequence[bool], order: _OrderKACF = "C") -> _Array1D[np.bool]: ...
 @overload
-def ravel(a: int | _NestedSequence[int], order: _OrderKACF = "C") -> _Array1D[np.int_ | np.bool]: ...
+def ravel(a: int | _NestedSequence[int], order: _OrderKACF = "C") -> _Array1D[np.int_ | Any]: ...
 @overload
-def ravel(a: float | _NestedSequence[float], order: _OrderKACF = "C") -> _Array1D[np.float64 | np.int_ | np.bool]: ...
+def ravel(a: float | _NestedSequence[float], order: _OrderKACF = "C") -> _Array1D[np.float64 | Any]: ...
 @overload
-def ravel(
-    a: complex | _NestedSequence[complex],
-    order: _OrderKACF = "C",
-) -> _Array1D[np.complex128 | np.float64 | np.int_ | np.bool]: ...
+def ravel(a: complex | _NestedSequence[complex], order: _OrderKACF = "C") -> _Array1D[np.complex128 | Any]: ...
 @overload
 def ravel(a: ArrayLike, order: _OrderKACF = "C") -> np.ndarray[tuple[int], np.dtype]: ...
 

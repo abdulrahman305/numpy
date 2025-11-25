@@ -1109,6 +1109,7 @@ endforeach
 # ------------------------------
 src_multiarray_umath_common = [
   'src/common/array_assign.c',
+  'src/common/blas_utils.c',
   'src/common/gil_utils.c',
   'src/common/mem_overlap.c',
   'src/common/npy_argparse.c',
@@ -1123,7 +1124,6 @@ src_multiarray_umath_common = [
 ]
 if have_blas
   src_multiarray_umath_common += [
-    'src/common/blas_utils.c',
     'src/common/cblasfuncs.c',
     'src/common/python_xerbla.c',
   ]
@@ -1161,7 +1161,7 @@ src_multiarray = multiarray_gen_headers + [
   'src/multiarray/dragon4.c',
   'src/multiarray/dtype_transfer.c',
   'src/multiarray/dtype_traversal.c',
-  src_file.process('src/multiarray/einsum.c.src'),
+  'src/multiarray/einsum.cpp',
   src_file.process('src/multiarray/einsum_sumprod.c.src'),
   'src/multiarray/public_dtype_api.c',
   'src/multiarray/flagsobject.c',
@@ -1282,6 +1282,7 @@ unique_hash_so = static_library(
   include_directories: [
     'include',
     'src/common',
+    'src/npymath',
   ],
   dependencies: [
     py_dep,
