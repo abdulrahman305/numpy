@@ -24,3 +24,5 @@ scipy-doctest>=1.8.0
 jupyterlite-sphinx>=0.18.0
 # Works with Pyodide 0.27.1
 jupyterlite-pyodide-kernel==0.5.2
+fonttools>=4.61.0 # not directly required, pinned by Snyk to avoid a vulnerability
+urllib3>=2.6.0 # not directly required, pinned by Snyk to avoid a vulnerability
